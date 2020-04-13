@@ -107,7 +107,7 @@ int64_t montecarlo_one_packet_loop (storage_model_t * storage,
 void montecarlo_main_loop(storage_model_t * storage,
                           int64_t virtual_packet_flag,
                           int nthreads,
-                          unsigned long seed);
+                          unsigned long seed, int inner_shell);
 
 montecarlo_event_handler_t get_event_handler (rpacket_t * packet, storage_model_t * storage,
                                               double *distance, rk_state *mt_state);

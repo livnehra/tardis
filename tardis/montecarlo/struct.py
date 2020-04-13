@@ -131,7 +131,8 @@ class StorageModel(Structure):
         ('survival_probability',c_double),
         ('tau_russian', c_double),
         ('tau_bias', POINTER(c_double)),
-        ('enable_biasing', c_int)
+        ('enable_biasing', c_int),
+		('inner_shell', c_int)
     ]
 
 

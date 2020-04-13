@@ -660,12 +660,12 @@ montecarlo_one_packet (storage_model_t * storage, rpacket_t * packet,
               double weight;
               rpacket_t virt_packet = *packet;
               double mu_min;
-              if (rpacket_get_r(&virt_packet) > storage->r_inner[0])
+              if (rpacket_get_r(&virt_packet) > storage->r_inner[storage->inner_shell])
                 {
                   mu_min =
                     -1.0 * sqrt (1.0 -
-                                 (storage->r_inner[0] / rpacket_get_r(&virt_packet)) *
-                                 (storage->r_inner[0] / rpacket_get_r(&virt_packet)));
+                                 (storage->r_inner[storage->inner_shell] / rpacket_get_r(&virt_packet)) *
+                                 (storage->r_inner[storage->inner_shell] / rpacket_get_r(&virt_packet)));
 
                   if (storage->full_relativity)
                     {
@@ -780,7 +780,7 @@ move_packet_across_shell_boundary (rpacket_t * packet,
     }
   if ((rpacket_get_current_shell_id (packet) < storage->no_of_shells - 1
        && rpacket_get_next_shell_id (packet) == 1)
-      || (rpacket_get_current_shell_id (packet) > 0
+      || (rpacket_get_current_shell_id (packet) > storage->inner_shell
           && rpacket_get_next_shell_id (packet) == -1))
     {
       rpacket_set_current_shell_id (packet,
@@ -1187,7 +1187,7 @@ montecarlo_one_packet_loop (storage_model_t * storage, rpacket_t * packet,
 }
 
 void
-montecarlo_main_loop(storage_model_t * storage, int64_t virtual_packet_flag, int nthreads, unsigned long seed)
+montecarlo_main_loop(storage_model_t * storage, int64_t virtual_packet_flag, int nthreads, unsigned long seed, int inner_shell)
 {
   int64_t finished_packets = 0;
   storage->virt_packet_count = 0;
@@ -1224,6 +1224,9 @@ montecarlo_main_loop(storage_model_t * storage, int64_t virtual_packet_flag, int
       int64_t chi_bf_tmp_size = (storage->cont_status) ? storage->no_of_edges : 0;
       double *chi_bf_tmp_partial = safe_malloc(sizeof(double) * chi_bf_tmp_size);
 
+      storage->inner_shell=inner_shell;
+      fprintf(stderr,"Inner shell: %d \n",storage->inner_shell);
+	  
       #pragma omp for
       for (int64_t packet_index = 0; packet_index < storage->no_of_packets; ++packet_index)
         {

@@ -113,6 +113,7 @@ class Simulation(PlasmaStateStorerMixin, HDFWriterMixin):
         self.converged = False
         self.iterations = iterations
         self.iterations_executed = 0
+        self.inner_shell = 0
         self.model = model
         self.plasma = plasma
         self.runner = runner
@@ -268,7 +269,7 @@ class Simulation(PlasmaStateStorerMixin, HDFWriterMixin):
                     self.iterations_executed + 1, self.iterations))
         self.runner.run(self.model, self.plasma, no_of_packets,
                         no_of_virtual_packets=no_of_virtual_packets,
-                        nthreads=self.nthreads, last_run=last_run)
+                        nthreads=self.nthreads, last_run=last_run, inner_shell=self.inner_shell)
         output_energy = self.runner.output_energy
         if np.sum(output_energy < 0) == len(output_energy):
             logger.critical("No r-packet escaped through the outer boundary.")
@@ -280,6 +281,17 @@ class Simulation(PlasmaStateStorerMixin, HDFWriterMixin):
         self.log_run_results(emitted_luminosity,
                              reabsorbed_luminosity)
         self.iterations_executed += 1
+		
+        #if (emitted_luminosity>0.9*self.luminosity_requested) and (emitted_luminosity<1.1*self.luminosity_requested):
+        if reabsorbed_luminosity > 8*emitted_luminosity:
+            delta=2
+        else:
+            delta=1
+		
+        if reabsorbed_luminosity > 1.3*emitted_luminosity:
+            print ("Increasing inner shell: ",self.inner_shell," -> ",self.inner_shell+delta)
+            self.inner_shell+=delta   			
+			
 
     def run(self):
         start_time = time.time()

@@ -97,6 +97,7 @@ typedef struct StorageModel
   double tau_russian;
   double *tau_bias;
   int enable_biasing;
+  int inner_shell;
 } storage_model_t;
 
 #endif // TARDIS_STORAGE_H

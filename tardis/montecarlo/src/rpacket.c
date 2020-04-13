@@ -16,8 +16,8 @@ rpacket_init (rpacket_t * packet, storage_model_t * storage, int packet_index,
   double current_energy = storage->packet_energies[packet_index];
   double current_mu = storage->packet_mus[packet_index];
   double comov_current_nu = current_nu;
-  int current_shell_id = 0;
-  double current_r = storage->r_inner[0];
+  int current_shell_id = storage->inner_shell;
+  double current_r = storage->r_inner[current_shell_id];
   double beta = current_r * storage->inverse_time_explosion * INVERSE_C;
 
   if (storage->full_relativity)

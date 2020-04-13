@@ -190,7 +190,7 @@ class MontecarloRunner(HDFWriterMixin):
 
     def run(self, model, plasma, no_of_packets,
             no_of_virtual_packets=0, nthreads=1,
-            last_run=False):
+            last_run=False, inner_shell=0):
         """
         Run the montecarlo calculation
 
@@ -224,7 +224,7 @@ class MontecarloRunner(HDFWriterMixin):
             model, plasma, self,
             virtual_packet_flag=no_of_virtual_packets,
             nthreads=nthreads,
-            last_run=last_run)
+            last_run=last_run, inner_shell=inner_shell)
         # Workaround so that j_blue_estimator is in the right ordering
         # They are written as an array of dimension (no_of_shells, no_of_lines)
         # but python expects (no_of_lines, no_of_shells)
@@ -392,6 +392,10 @@ class MontecarloRunner(HDFWriterMixin):
                 self.t_rad_estimator_constant *
                 self.nu_bar_estimator /
                 self.j_estimator)
+        #print(t_rad)
+        t_rad=np.isnan(t_rad)*8888+np.nan_to_num(t_rad)
+        #print(t_rad)
+				
         w = self.j_estimator / (
                 4 * const.sigma_sb.cgs.value * t_rad ** 4 *
                 self.time_of_simulation.value *

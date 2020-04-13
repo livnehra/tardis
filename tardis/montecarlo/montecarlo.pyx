@@ -122,8 +122,9 @@ cdef extern from "src/cmontecarlo.h":
         double tau_russian
         double *tau_bias
         int enable_biasing
+        int inner_shell
 
-    void montecarlo_main_loop(storage_model_t * storage, int_type_t virtual_packet_flag, int nthreads, unsigned long seed)
+    void montecarlo_main_loop(storage_model_t * storage, int_type_t virtual_packet_flag, int nthreads, unsigned long seed, int inner_shell)
 
 cdef extern from "src/integrator.h":
     double *_formal_integral(
@@ -156,6 +157,8 @@ cdef initialize_storage_model(model, plasma, runner, storage_model_t *storage):
     storage.r_inner = <double*> PyArray_DATA(runner.r_inner_cgs)
     storage.r_outer = <double*> PyArray_DATA(runner.r_outer_cgs)
     storage.v_inner = <double*> PyArray_DATA(runner.v_inner_cgs)
+	
+    storage.inner_shell = 0
 
     # Setup the rest
     # times
@@ -279,7 +282,7 @@ cdef initialize_storage_model(model, plasma, runner, storage_model_t *storage):
     storage.t_electrons = <double*> t_electrons.data
 
 def montecarlo_radial1d(model, plasma, runner, int_type_t virtual_packet_flag=0,
-                        int nthreads=4,last_run=False):
+                        int nthreads=4,last_run=False,inner_shell=0):
     """
     Parameters
     ----------
@@ -312,7 +315,7 @@ def montecarlo_radial1d(model, plasma, runner, int_type_t virtual_packet_flag=0,
 
     initialize_storage_model(model, plasma, runner, &storage)
 
-    montecarlo_main_loop(&storage, virtual_packet_flag, nthreads, runner.seed)
+    montecarlo_main_loop(&storage, virtual_packet_flag, nthreads, runner.seed, inner_shell)
     runner.virt_logging = LOG_VPACKETS
     if LOG_VPACKETS != 0:
         runner.virt_packet_nus = c_array_to_numpy(storage.virt_packet_nus, np.NPY_DOUBLE, storage.virt_packet_count)
