@@ -122,8 +122,8 @@ class LuminosityInner(ProcessingPlasmaProperty):
     outputs = ('luminosity_inner',)
 
     @staticmethod
-    def calculate(r_inner, t_inner):
-        return (4 * np.pi * const.sigma_sb.cgs * r_inner[0] ** 2
+    def calculate(r_inner, t_inner, inner_shell):
+        return (4 * np.pi * const.sigma_sb.cgs * r_inner[inner_shell] ** 2
                 * t_inner ** 4).to('erg/s')
 
 class TimeSimulation(ProcessingPlasmaProperty):

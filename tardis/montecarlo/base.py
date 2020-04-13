@@ -211,7 +211,7 @@ class MontecarloRunner(HDFWriterMixin):
                 model,
                 plasma,
                 self)
-        self.time_of_simulation = self.calculate_time_of_simulation(model)
+        self.time_of_simulation = self.calculate_time_of_simulation(model, inner_shell)
         self.volume = model.volume
         self._initialize_estimator_arrays(self.volume.shape[0],
                                           plasma.tau_sobolevs.shape)
@@ -403,12 +403,12 @@ class MontecarloRunner(HDFWriterMixin):
 
         return t_rad * u.K, w
 
-    def calculate_luminosity_inner(self, model):
+    def calculate_luminosity_inner(self, model, inner_shell):
         return (4 * np.pi * const.sigma_sb.cgs *
-                model.r_inner[0] ** 2 * model.t_inner ** 4).to('erg/s')
+                model.r_inner[inner_shell] ** 2 * model.t_inner ** 4).to('erg/s')
 
-    def calculate_time_of_simulation(self, model):
-        return (1.0 * u.erg / self.calculate_luminosity_inner(model))
+    def calculate_time_of_simulation(self, model, inner_shell):
+        return (1.0 * u.erg / self.calculate_luminosity_inner(model, inner_shell))
 
     def calculate_f_nu(self, frequency):
         pass
