@@ -288,7 +288,8 @@ class Simulation(PlasmaStateStorerMixin, HDFWriterMixin):
         else:
             delta=1
 		
-        if reabsorbed_luminosity > 1.3*emitted_luminosity:
+		# Only update when t_inner is growing, to avoid over-increasing.
+        if (emitted_luminosity < 1.2*self.luminosity_requested) and (reabsorbed_luminosity > 1.3*emitted_luminosity):
             print ("Increasing inner shell: ",self.inner_shell," -> ",self.inner_shell+delta)
             self.inner_shell+=delta   			
 			
