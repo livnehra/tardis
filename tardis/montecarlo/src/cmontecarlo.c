@@ -1219,13 +1219,13 @@ montecarlo_main_loop(storage_model_t * storage, int64_t virtual_packet_flag, int
 #else
       rk_state mt_state;
       rk_seed (seed, &mt_state);
-      fprintf(stderr, "Running without OpenMP\n");
+      //fprintf(stderr, "Running without OpenMP\n");
 #endif
       int64_t chi_bf_tmp_size = (storage->cont_status) ? storage->no_of_edges : 0;
       double *chi_bf_tmp_partial = safe_malloc(sizeof(double) * chi_bf_tmp_size);
 
       storage->inner_shell=inner_shell;
-      fprintf(stderr,"Inner shell: %d \n",storage->inner_shell);
+      //fprintf(stderr,"Inner shell: %d \n",storage->inner_shell);
 	  
       #pragma omp for
       for (int64_t packet_index = 0; packet_index < storage->no_of_packets; ++packet_index)

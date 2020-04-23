@@ -239,6 +239,9 @@ class Simulation(PlasmaStateStorerMixin, HDFWriterMixin):
                 self.convergence_strategy.t_inner.damping_constant)
         else:
             next_t_inner = self.model.t_inner
+			
+        if next_t_inner.value > 30000:
+            next_t_inner = 30000 * u.K
 
         self.log_plasma_state(self.model.t_rad, self.model.w,
                               self.model.t_inner, next_t_rad, next_w,
@@ -267,6 +270,7 @@ class Simulation(PlasmaStateStorerMixin, HDFWriterMixin):
     def iterate(self, no_of_packets, no_of_virtual_packets=0, last_run=False):
         logger.info('Starting iteration {0:d}/{1:d}'.format(
                     self.iterations_executed + 1, self.iterations))
+        logger.info('Inner shell: '+str(self.inner_shell))
         self.runner.run(self.model, self.plasma, no_of_packets,
                         no_of_virtual_packets=no_of_virtual_packets,
                         nthreads=self.nthreads, last_run=last_run, inner_shell=self.inner_shell)
@@ -290,7 +294,7 @@ class Simulation(PlasmaStateStorerMixin, HDFWriterMixin):
 		
 		# Only update when t_inner is growing, to avoid over-increasing.
         if (emitted_luminosity < 1.2*self.luminosity_requested) and (reabsorbed_luminosity > 1.3*emitted_luminosity):
-            print ("Increasing inner shell: ",self.inner_shell," -> ",self.inner_shell+delta)
+            logger.info ("Increasing inner shell: "+str(self.inner_shell)+" -> "+str(self.inner_shell+delta))
             self.inner_shell+=delta   			
 			
 
